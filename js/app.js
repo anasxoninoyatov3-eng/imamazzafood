@@ -331,8 +331,86 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         const totalRow = document.createElement('div');
         totalRow.className = 'order-item';
+        totalRow.id = 'subtotalRow';
         totalRow.innerHTML = `<div><strong>Total</strong></div><div><strong>${formatPrice(total)}</strong></div>`;
         orderItemsEl.appendChild(totalRow);
+
+        // Delivery options and fee calculation
+        // Ensure helper functions exist for calculation and UI updates
+        // delivery methods: standard, express, pickup
+        function calculateDelivery(subtotal, method) {
+            // subtotal expected as number
+            const m = method || 'standard';
+            let fee = 0;
+            let eta = 0; // minutes
+            if (m === 'pickup') {
+                fee = 0; eta = 10;
+            } else if (m === 'express') {
+                // express costs 5% of subtotal, at least 5000
+                fee = Math.max(5000, Math.round(subtotal * 0.05));
+                eta = 20;
+            } else {
+                // standard
+                // free delivery for large orders, otherwise fixed fee
+                if (subtotal >= 100000) { fee = 0; } else { fee = 10000; }
+                eta = 30;
+            }
+            return { fee, eta, method: m };
+        }
+
+        function updateDeliveryUI() {
+            const subtotal = total || 0;
+            const existing = document.getElementById('deliveryOptions');
+            if (!existing) {
+                const wrapper = document.createElement('div');
+                wrapper.id = 'deliveryOptions';
+                wrapper.className = 'order-item';
+                wrapper.style.marginTop = '8px';
+                wrapper.innerHTML = `
+                    <div>
+                        <label for="deliveryMethod"><strong>Yetkazib berish turi</strong></label>
+                        <select id="deliveryMethod" aria-label="Delivery method" style="margin-top:6px">
+                            <option value="standard">Standard — odatda 30-45 daqiqa</option>
+                            <option value="express">Express — tezroq (qo'shimcha to'lov)</option>
+                            <option value="pickup">Olib ketish — do'kon ichida (0 so'm)</option>
+                        </select>
+                    </div>
+                    <div id="deliveryFeeRow" style="margin-top:8px"><small>Yuklangan...</small></div>
+                `;
+                orderItemsEl.appendChild(wrapper);
+                const sel = wrapper.querySelector('#deliveryMethod');
+                sel.addEventListener('change', () => {
+                    const info = calculateDelivery(subtotal, sel.value);
+                    // store current delivery info for order submission
+                    window.__mazza_current_delivery = info;
+                    const feeRow = document.getElementById('deliveryFeeRow');
+                    if (feeRow) feeRow.innerHTML = `<div><strong>Yetkazib berish:</strong></div><div><strong>${formatPrice(info.fee)}</strong> — ${info.eta} min</div>`;
+                    // update grand total row
+                    let g = document.getElementById('grandTotalRow');
+                    if (!g) {
+                        g = document.createElement('div'); g.id = 'grandTotalRow'; g.className = 'order-item';
+                        orderItemsEl.appendChild(g);
+                    }
+                    g.innerHTML = `<div><strong>Jami (yetkazib berish bilan)</strong></div><div><strong>${formatPrice(subtotal + info.fee)}</strong></div>`;
+                });
+
+                // trigger initial calculation
+                sel.dispatchEvent(new Event('change'));
+            } else {
+                // update values if already present
+                const sel = document.getElementById('deliveryMethod');
+                const info = calculateDelivery(total, sel ? sel.value : 'standard');
+                window.__mazza_current_delivery = info;
+                const feeRow = document.getElementById('deliveryFeeRow');
+                if (feeRow) feeRow.innerHTML = `<div><strong>Yetkazib berish:</strong></div><div><strong>${formatPrice(info.fee)}</strong> — ${info.eta} min</div>`;
+                let g = document.getElementById('grandTotalRow');
+                if (!g) { g = document.createElement('div'); g.id = 'grandTotalRow'; g.className = 'order-item'; orderItemsEl.appendChild(g); }
+                g.innerHTML = `<div><strong>Jami (yetkazib berish bilan)</strong></div><div><strong>${formatPrice(total + info.fee)}</strong></div>`;
+            }
+        }
+
+        // expose calculation to outer scope via a property so submit handler can use it
+        updateDeliveryUI();
     }
 
     function closeOrderFn() { orderModal.setAttribute('aria-hidden', 'true'); }
@@ -347,7 +425,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const phone = document.getElementById('customerPhone').value.trim();
         const address = document.getElementById('customerAddress').value.trim();
         if (!name || !phone || !address) { alert('Iltimos, ism, telefon va manzilni to\'ldiring.'); return }
-        const order = { id: 'ord_' + Date.now(), name, phone, address, items: cart, total: Object.values(cart).reduce((s, i) => s + i.price * i.qty, 0), ts: Date.now() };
+        const subtotal = Object.values(cart).reduce((s, i) => s + i.price * i.qty, 0);
+        const delivery = window.__mazza_current_delivery || { fee: 0, eta: 0, method: 'standard' };
+        const totalWithDelivery = subtotal + (Number(delivery.fee) || 0);
+        const order = { id: 'ord_' + Date.now(), name, phone, address, items: cart, subtotal, delivery, total: totalWithDelivery, ts: Date.now() };
         const orders = JSON.parse(localStorage.getItem('mazza_orders') || '[]');
         orders.push(order);
         localStorage.setItem('mazza_orders', JSON.stringify(orders));
@@ -358,8 +439,13 @@ document.addEventListener('DOMContentLoaded', () => {
             sendOrderToBackend(order);
         }
 
-        // Demo confirmation and clear cart
-        alert('Buyurtma qabul qilindi! Tez orada siz bilan bog\'lanamiz.');
+        // Demo confirmation and clear cart — include delivery ETA and total
+        try {
+            const eta = delivery && delivery.eta ? `${delivery.eta} daqiqa` : 'tez orada';
+            alert(`Buyurtma qabul qilindi! Yetkazib berish (${delivery.method}) taxminan ${eta}. Jami: ${formatPrice(totalWithDelivery)}`);
+        } catch (err) {
+            alert('Buyurtma qabul qilindi! Tez orada siz bilan bog\'lanamiz.');
+        }
         cart = {}; updateCartUI(); closeOrderFn(); closeCartFn();
     })
 
@@ -481,12 +567,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (reviewForm) {
         reviewForm.addEventListener('submit', e => {
-            e.preventDefault();
-            const name = reviewName.value.trim();
+            e.preventDefault(); 
+            // Use registered user's name for reviews. Require sign-in if not present.
+            const cur = getCurrentUser();
+            if (!cur) {
+                alert('Iltimos, sharh qoldirish uchun tizimga kiring yoki hisob yarating.');
+                showSignIn();
+                openAuth();
+                return;
+            }
+            const name = cur.name || cur.phone || 'Foydalanuvchi';
             const rating = parseInt(reviewRating.value, 10) || 5;
             const text = reviewText.value.trim();
-            if (!name || !text) {
-                alert('Iltimos, ismingiz va qisqacha fikringizni yozing.');
+            if (!text) {
+                alert('Iltimos, qisqacha fikringizni yozing.');
                 return;
             }
             const entry = { name, rating, text, ts: Date.now() };

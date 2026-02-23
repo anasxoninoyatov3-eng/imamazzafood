@@ -10,7 +10,7 @@
         content="fast food, burger, pizza, lavash, qo'qon, yetkazib berish, mazza food, online buyurtma">
     <meta name="theme-color" content="#ffc107">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="./images/image.png">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/7997/7997011.png">
     <title>Mazza Food — Tez va Mazali</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,7 +22,8 @@
     <header class="site-header" role="banner">
         <div class="container header-inner">
             <div class="brand">
-                <img src="images/image.png" alt="Mazza icon" class="brand-icon" aria-hidden="true">
+                <img src="https://cdn-icons-png.flaticon.com/512/7997/7997011.png" alt="Mazza icon" class="brand-icon"
+                    aria-hidden="true">
                 <div class="brand-text">
                     <a href="#" aria-label="Mazza Food home" class="logo">Mazza<span>Food</span></a>
                     <p class="tag">Tez. Yangi. Mazali.</p>
@@ -37,19 +38,18 @@
                 </ul>
             </nav>
 
-            <button id="burgerBtn" class="burger-btn" aria-label="Open menu" aria-expanded="false"
-                aria-controls="mobileNav">
-
-            </button>
-
             <div class="header-actions">
-                <button id="accountBtn" class="cart-btn" aria-label="Account items" title="General account">
+                <button id="accountBtn" class="cart-btn account-pill" aria-label="Account items" title="General account">
                     👤 <span id="accountCount" class="cart-count" aria-hidden="true">0</span>
                 </button>
 
-                <button id="cartBtn" class="cart-btn" aria-haspopup="dialog" aria-controls="cartModal"
-                    aria-label="Open cart">
-                    🛒 <span id="cartCount" class="cart-count" aria-hidden="true">0</span>
+                <button id="cartBtn" class="cart-btn" aria-haspopup="dialog" aria-controls="cartModal" aria-label="Open cart">
+                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+                    <span id="cartCount" class="cart-count" aria-hidden="true">0</span>
+                </button>
+
+                <button id="burgerBtn" class="burger-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
+                    <i class="fa-solid fa-bars" aria-hidden="true"></i>
                 </button>
             </div>
         </div>
@@ -314,10 +314,12 @@
                     </div>
                 </article>
             </div>
-        </section> 
+        </section>
         <div class="sections-card-ima">
             <section id="about" class="about container">
-                <h2>Biz haqida</h2>
+                <h2>Biz haqida
+
+                </h2>
                 <p>Mazza Food — bu o'zbek iste'molchilari uchun yaratilgan, qo'shimcha qo'shimcha bilan ta'mlantirilgan
                     taomlar bilan tanishuvchi joy. Biz har bir taomni mukammallik bilan pishirib, mijozlarga eng yaxshi
                     tajriba bilan xizmat ko'rsatamiz.</p>
@@ -332,7 +334,7 @@
                 <h2 id="reviews-heading">Mijozlar fikrlari</h2>
                 <form id="reviewForm" class="review-form" aria-label="Leave a review">
                     <div class="form-row">
-                        <input type="text" id="reviewName" placeholder="Ismingiz" required>
+                        <!-- Name removed: reviews use the signed-in user's registered name. -->
                         <select id="reviewRating" required>
                             <option value="5">5 — A'lo</option>
                             <option value="4">4 — Yaxshi</option>
@@ -405,7 +407,7 @@
                     <label for="customerAddress">Manzil</label>
                     <input id="customerAddress" name="address" type="text" required>
 
-                    <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+                    <div class="modal-actions" style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
                         <button type="button" id="orderCancel" class="btn">Bekor qilish</button>
                         <button type="submit" class="btn primary">Buyurtmani yuborish</button>
                     </div>

@@ -1,16 +1,19 @@
-@import url(https://fonts.googleapis.com/css2?family=Mukta:wght@100;200;300;400;500;600;800&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=Rubik:wght@100;200;300;400;500;600;800;900&display=swap);
+
+
+
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Mukta', sans-serif;
+    font-family: 'Rubik', sans-serif;
 }
 
 :root {
     --bg: #fdfbf7;
     --accent: #ff6b35;
-    --accent-hover: #e85d2a;
+    --accent-hover: #e85d2a; 
     --muted: #6b6b6b;
     --card: #ffffff;
     --green: #2ecc71;
@@ -71,7 +74,7 @@ body {
 .brand .logo {
     font-weight: 800;
     color: var(--accent);
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     text-decoration: none;
     letter-spacing: -0.5px;
 }
@@ -119,14 +122,20 @@ body {
 .cart-btn {
     background: #fff;
     border: 1px solid #eee;
-    padding: 10px 14px;
+    padding: 8px 12px;
     border-radius: 10px;
-    font-size: 1.1rem;
+    font-size: 0.98rem;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     box-shadow: var(--shadow-sm);
+}
+
+.cart-btn i {
+    font-size: 18px;
+    color: var(--dark);
+    margin-right: 8px;
 }
 
 .cart-btn:hover {
@@ -135,50 +144,52 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-.burger-btn {
-    display: none;
-    /* Hidden on desktop */
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    flex-direction: column;
-    gap: 5px;
-    width: 40px;
-    height: 40px;
-    justify-content: center;
+/* Account pill (larger, prominent) */
+.account-pill {
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    display: inline-flex;
     align-items: center;
+    gap: 8px;
 }
 
-.burger-btn::before,
-.burger-btn::after,
-.burger-btn span {
-    content: '';
-    display: block;
-    width: 24px;
-    height: 2px;
-    background: var(--dark);
-    border-radius: 2px;
-    transition: all 0.3s;
-}
-
-/* We need a span for the middle line if we want 3 lines, or just before/after for 2. 
-   The HTML is empty, so we'll use a background image or rely on pseudo-elements.
-   Let's use a simple SVG background for reliability if HTML is empty.
-*/
+/* Always show burger on wider screens too and align sizes */
 .burger-btn {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231a1a1a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='3' y1='12' x2='21' y2='12'%3E%3C/line%3E%3Cline x1='3' y1='6' x2='21' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='18' x2='21' y2='18'%3E%3C/line%3E%3C/svg%3E");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 28px;
+    display: inline-flex !important;
 }
 
-.burger-btn::before,
-.burger-btn::after {
-    display: none;
+.brand-icon {
+    width: 44px;
+    height: 44px;
 }
 
-/* Reset pseudo if using bg */
+.brand .logo { font-size: 1.55rem; }
+
+.burger-btn {
+    display: none; /* visible on smaller screens via media query */
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 8px;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.burger-btn i {
+    font-size: 18px;
+    color: var(--dark);
+}
+
+.burger-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+}
 
 
 /* Hero Section */
@@ -395,6 +406,173 @@ body {
     background: var(--accent);
 }
 
+/* Pizza size select styling (applies to all .size-select) */
+.size-select,
+.card-body .size-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    max-width: 320px;
+    background-color: #f6f7f8;
+    border: 1px solid #e9eaeb;
+    padding: 10px 40px 10px 12px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: var(--dark);
+    cursor: pointer;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.02);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='10' viewBox='0 0 14 10'%3E%3Cpath fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M1 1l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px 10px;
+}
+
+.size-select:focus,
+.card-body .size-select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 6px 20px rgba(255,107,53,0.12);
+    transform: translateY(-1px);
+}
+
+/* Smaller appearance on compact cards */
+@media (max-width: 480px) {
+    .size-select,
+    .card-body .size-select {
+        padding: 10px 36px 10px 12px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Responsive navbar / mobile styles */
+@media (max-width: 900px) {
+    /* show burger, hide desktop nav */
+    .burger-btn { display: block; }
+    .nav { display: none; }
+
+    /* make header content more compact and allow wrapping */
+    .header-inner {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .brand { gap: 8px; }
+
+    /* header actions (account / cart) should stay right-aligned */
+    .header-actions {
+        margin-left: auto;
+        gap: 8px;
+    }
+
+    /* Make cart and account buttons slightly smaller on mobile */
+    .cart-btn {
+        padding: 8px 10px;
+        border-radius: 10px;
+        font-size: 0.95rem;
+    }
+
+    /* Mobile nav overlay */
+    .mobile-nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100vh;
+        background: rgba(255,255,255,0.98);
+        z-index: 200;
+        transform: translateY(-8px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 220ms ease, transform 220ms ease;
+        padding-top: 72px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .mobile-nav.open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .mobile-nav ul {
+        list-style: none;
+        padding: 18px 20px;
+        margin: 0;
+        width: 100%;
+        max-width: 420px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .mobile-nav a {
+        display: block;
+        padding: 14px 16px;
+        border-radius: 10px;
+        background: #fff;
+        color: var(--dark);
+        text-align: left;
+        box-shadow: var(--shadow-sm);
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    /* Slightly increase the hit area for burger */
+    .burger-btn { width: 44px; height: 44px; }
+}
+
+
+
+/* Reviews */
+.reviews-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.review-item {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: var(--shadow-sm);
+}
+.review-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+}
+.review-body {
+    color: var(--dark);
+}
+
+/* Small pill delete button used in review cards */
+.review-delete {
+    background: rgba(0,0,0,0.05);
+    border: none;
+    color: var(--muted);
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, transform 0.08s;
+}
+.review-delete:hover {
+    background: rgba(255,107,53,0.08);
+    color: var(--accent);
+    transform: translateY(-1px);
+}
+
+
 /* Pizza Size Select */
 .size-select {
     width: 100%;
@@ -437,6 +615,90 @@ body {
     display: flex;
     flex-direction: column;
     max-height: 90vh;
+}
+
+/* Order modal specific improvements */
+.modal-panel .modal-body form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.order-items {
+    background: #fff7f2;
+    border: 1px dashed rgba(255, 107, 53, 0.12);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.modal-body input[type="text"],
+.modal-body input[type="tel"],
+.modal-body input[type="email"] {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #e8e8e8;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04) inset;
+    font-size: 0.98rem;
+}
+
+.modal-body label {
+    font-size: 0.92rem;
+    color: var(--muted);
+}
+
+.modal-actions .btn {
+    padding: 12px 18px;
+    border-radius: 24px;
+    min-width: 140px;
+}
+
+.modal-actions .btn:not(.primary) {
+    background: #f1f1f1;
+    color: #333;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.modal-actions .btn.primary {
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-hover) 100%);
+    color: #fff;
+    box-shadow: 0 12px 30px rgba(255, 107, 53, 0.28);
+}
+
+/* make modal form look good on small screens */
+@media (max-width: 600px) {
+    .modal-panel {
+        padding-bottom: 12px;
+    }
+
+    .modal-body input[type="text"],
+    .modal-body input[type="tel"] {
+        padding: 14px;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .modal-actions .btn {
+        width: 100%;
+        min-width: 0;
+    }
 }
 
 .modal-header {
@@ -556,7 +818,7 @@ main .sections-card-ima {
     display: flex;
     flex-direction: column;
     gap: 100px;
-}   
+}
 
 
 /* Mobile Nav */
