@@ -408,17 +408,24 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const submitBtn = orderForm.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.textContent;
-        
+
         const name = document.getElementById('customerName').value.trim();
         const phone = document.getElementById('customerPhone').value.trim();
         const address = document.getElementById('customerAddress').value.trim();
-        if (!name || !phone || !address) { alert('Iltimos, ism, telefon va manzilni to\'ldiring.'); return }
         
+        // Validate phone format: must be +998 followed by 9 digits
+        if (!/^\+998\d{9}$/.test(phone)) {
+            alert('Telefon raqami noto\'g\'ri formatda. Iltimos, +998 bilan boshlanadigan to\'g\'ri raqam kiriting (masalan: +998901234567).');
+            return;
+        }
+
+        if (!name || !phone || !address) { alert('Iltimos, ism, telefon va manzilni to\'ldiring.'); return }
+
         const subtotal = Object.values(cart).reduce((s, i) => s + i.price * i.qty, 0);
         const delivery = window.__mazza_current_delivery || { fee: 0, eta: 0, method: 'standard' };
         const totalWithDelivery = subtotal + (Number(delivery.fee) || 0);
         const order = { id: 'ord_' + Date.now(), name, phone, address, items: cart, subtotal, delivery, total: totalWithDelivery, ts: Date.now() };
-        
+
         const orders = JSON.parse(localStorage.getItem('mazza_orders') || '[]');
         orders.push(order);
         localStorage.setItem('mazza_orders', JSON.stringify(orders));
@@ -446,9 +453,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             alert('Buyurtma qabul qilindi! Tez orada siz bilan bog\'lanamiz.');
         }
-        
+
         cart = {}; updateCartUI(); closeOrderFn(); closeCartFn();
-        
+
         // Restore button state
         if (submitBtn) {
             submitBtn.disabled = false;
@@ -507,7 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .catch(err => {
                     console.error('Fetch error:', err);
-                    throw err; 
+                    throw err;
                 });
         })).then(() => {
             console.log('Order sent to Telegram');
@@ -633,4 +640,51 @@ document.addEventListener('DOMContentLoaded', () => {
             renderReviews();
         })
     }
+
+    // --- Phone Number Input Formatting ---
+    function setupPhoneInput(inputId) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+
+        // Set initial value on focus
+        input.addEventListener('focus', () => {
+            if (!input.value) input.value = '+998';
+        });
+
+        // Enforce format on input
+        input.addEventListener('input', () => {
+            let val = input.value;
+            
+            // Remove all non-digits
+            const digits = val.replace(/\D/g, '');
+            
+            // Reconstruct with +998 prefix
+            if (digits.startsWith('998')) {
+                val = '+' + digits;
+            } else {
+                val = '+998' + digits;
+            }
+            
+            // Limit length to 13 (+998 + 9 digits)
+            if (val.length > 13) {
+                val = val.slice(0, 13);
+            }
+            
+            if (input.value !== val) {
+                input.value = val;
+            }
+        });
+        
+        // Prevent backspace from deleting the prefix (+998)
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && input.value.length <= 4) {
+                 e.preventDefault();
+            }
+        });
+    }
+
+    setupPhoneInput('customerPhone');
+    setupPhoneInput('suPhone');
+    setupPhoneInput('siPhone');
+
 });
