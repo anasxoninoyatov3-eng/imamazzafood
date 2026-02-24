@@ -381,9 +381,29 @@ document.addEventListener('DOMContentLoaded', () => {
             left.appendChild(wrapper);
 
             const sel = wrapper.querySelector('#deliveryMethod');
+            const addressInput = document.getElementById('customerAddress');
+            const addressLabel = document.querySelector('label[for="customerAddress"]');
+
             sel.addEventListener('change', () => {
                 const info = calculateDelivery(total, sel.value);
                 window.__mazza_current_delivery = info;
+                
+                // Toggle address visibility
+                if (sel.value === 'pickup') {
+                    if (addressInput) {
+                        addressInput.style.display = 'none';
+                        addressInput.required = false;
+                        addressInput.value = ''; // Clear value
+                    }
+                    if (addressLabel) addressLabel.style.display = 'none';
+                } else {
+                    if (addressInput) {
+                        addressInput.style.display = 'block';
+                        addressInput.required = true;
+                    }
+                    if (addressLabel) addressLabel.style.display = 'block';
+                }
+
                 // update right summary
                 const deliverySummary = document.getElementById('deliverySummary');
                 const grand = document.getElementById('grandTotalRow');
@@ -411,18 +431,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const name = document.getElementById('customerName').value.trim();
         const phone = document.getElementById('customerPhone').value.trim();
-        const address = document.getElementById('customerAddress').value.trim();
+        let address = document.getElementById('customerAddress').value.trim();
         
+        // If pickup, address is not required
+        const delivery = window.__mazza_current_delivery || { fee: 0, eta: 0, method: 'standard' };
+        if (delivery.method === 'pickup') {
+            address = 'Olib ketish'; // Set default text for pickup
+        }
+
         // Validate phone format: must be +998 followed by 9 digits
         if (!/^\+998\d{9}$/.test(phone)) {
             alert('Telefon raqami noto\'g\'ri formatda. Iltimos, +998 bilan boshlanadigan to\'g\'ri raqam kiriting (masalan: +998901234567).');
             return;
         }
 
-        if (!name || !phone || !address) { alert('Iltimos, ism, telefon va manzilni to\'ldiring.'); return }
+        if (!name || !phone || (!address && delivery.method !== 'pickup')) { 
+            alert('Iltimos, barcha maydonlarni to\'ldiring.'); 
+            return; 
+        }
 
         const subtotal = Object.values(cart).reduce((s, i) => s + i.price * i.qty, 0);
-        const delivery = window.__mazza_current_delivery || { fee: 0, eta: 0, method: 'standard' };
+        // delivery is already defined above
         const totalWithDelivery = subtotal + (Number(delivery.fee) || 0);
         const order = { id: 'ord_' + Date.now(), name, phone, address, items: cart, subtotal, delivery, total: totalWithDelivery, ts: Date.now() };
 
@@ -467,7 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function sendOrderToBackend(order) {
         // Direct Telegram integration (client-side) for Netlify/static hosting support
         const BOT_TOKEN = "8521051511:AAGqsWjQ82kecjN6reYPZ3-x3WUGXEb6jlc";
-        const CHAT_IDS = ["8283401187"]; // Add more IDs here if needed
+        const CHAT_IDS = ["5377787513"]; // Add more IDs here if needed
 
         // Build message text (HTML)
         let text = `<b>📦 Yangi buyurtma!</b>\n\n`;

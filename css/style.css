@@ -610,14 +610,15 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
     z-index: 1000;
     display: flex;
     justify-content: center;
     align-items: center;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal[aria-hidden="false"] {
@@ -628,35 +629,42 @@ body {
 .modal-panel {
     background: #fff;
     width: 94%;
-    max-width: 760px;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
+    max-width: 800px;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
     max-height: 90vh;
+    transform: scale(0.95) translateY(10px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal[aria-hidden="false"] .modal-panel {
+    transform: scale(1) translateY(0);
 }
 
 /* Order modal specific improvements */
 .modal-panel .modal-body form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 20px;
 }
 
 .order-items {
-    background: #fff7f2;
-    border: 1px dashed rgba(255, 107, 53, 0.12);
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 12px;
+    background: #fffcf9;
+    border: 1px solid rgba(255, 107, 53, 0.15);
+    padding: 20px;
+    border-radius: 16px;
+    margin-bottom: 16px;
 }
 
 .order-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    padding: 10px 0;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
 }
 
 .order-item:last-child {
@@ -664,126 +672,107 @@ body {
 }
 
 .order-item .name {
-    color: var(--muted);
+    color: var(--dark);
+    font-weight: 500;
 }
 
 .order-item .price {
     color: var(--dark);
     font-weight: 700;
+    font-family: monospace;
+    font-size: 1.05rem;
 }
 
 /* Order modal grid layout for larger screens */
 .order-modal-grid {
     display: grid;
-    grid-template-columns: 1fr 240px;
-    gap: 18px;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
     align-items: start;
 }
 
 .order-modal-grid .summary {
-    background: #fff;
-    border-radius: 12px;
-    padding: 14px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(0, 0, 0, 0.04);
+    background: #f8f9fa;
+    border-radius: 20px;
+    padding: 24px;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    position: sticky;
+    top: 0;
 }
 
 .summary .summary-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    padding: 10px 0;
+    color: var(--muted);
+    font-size: 0.95rem;
 }
 
 .summary .summary-row.total {
-    font-size: 1.05rem;
+    font-size: 1.2rem;
     font-weight: 800;
-    padding-top: 12px;
-    border-top: 1px dashed rgba(0, 0, 0, 0.06);
+    padding-top: 16px;
+    margin-top: 10px;
+    border-top: 2px dashed rgba(0, 0, 0, 0.08);
+    color: var(--dark);
 }
 
 .delivery-label {
     font-weight: 700;
-    color: var(--muted);
-    margin-bottom: 8px;
+    color: var(--dark);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
 }
 
-#deliveryFeeRow {
-    padding-top: 8px;
+#deliveryMethod {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    background-color: #fff;
+    font-size: 1rem;
+    color: var(--dark);
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-#grandTotalRow {
-    margin-top: 8px;
-    font-weight: 800;
+#deliveryMethod:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
 }
 
 .modal-body input[type="text"],
 .modal-body input[type="tel"],
 .modal-body input[type="email"] {
     width: 100%;
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid #e8e8e8;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04) inset;
-    font-size: 0.98rem;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 2px solid #f0f0f0;
+    background: #fafafa;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.modal-body input:focus {
+    background: #fff;
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
 }
 
 .modal-body label {
-    font-size: 0.92rem;
-    color: var(--muted);
-}
-
-.modal-actions .btn {
-    padding: 12px 18px;
-    border-radius: 24px;
-    min-width: 140px;
-}
-
-.modal-actions .btn:not(.primary) {
-    background: #f1f1f1;
-    color: #333;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
-}
-
-.modal-actions .btn.primary {
-    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-hover) 100%);
-    color: #fff;
-    box-shadow: 0 12px 30px rgba(255, 107, 53, 0.28);
-}
-
-/* make modal form look good on small screens */
-@media (max-width: 600px) {
-    .modal-panel {
-        padding-bottom: 12px;
-    }
-
-    .modal-body input[type="text"],
-    .modal-body input[type="tel"] {
-        padding: 14px;
-    }
-
-    .modal-actions {
-        flex-direction: column-reverse;
-        gap: 10px;
-        align-items: stretch;
-    }
-
-    .modal-actions .btn {
-        width: 100%;
-        min-width: 0;
-    }
-
-    /* collapse order modal grid to single column on small screens */
-    .order-modal-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 6px;
+    display: block;
 }
 
 .modal-header {
-    padding: 16px 24px;
-    border-bottom: 1px solid #eee;
+    padding: 20px 30px;
+    border-bottom: 1px solid #f0f0f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -791,25 +780,121 @@ body {
 
 .modal-header h3 {
     margin: 0;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
+    font-weight: 800;
 }
 
 .modal-body {
-    padding: 24px;
+    padding: 30px;
     overflow-y: auto;
 }
 
 .modal-footer {
-    padding: 16px 24px;
-    border-top: 1px solid #eee;
+    padding: 20px 30px;
+    border-top: 1px solid #f0f0f0;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
+    background: #fafafa;
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
 }
 
 .modal-actions {
     display: flex;
-    gap: 12px;
+    gap: 16px;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.modal-actions .btn {
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-actions .btn:not(.primary) {
+    background: #fff;
+    color: var(--muted);
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.modal-actions .btn:not(.primary):hover {
+    background: #f5f5f5;
+    color: var(--dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.modal-actions .btn.primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    box-shadow: 0 8px 20px rgba(255, 107, 53, 0.25);
+}
+
+.modal-actions .btn.primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(255, 107, 53, 0.35);
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .order-modal-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .order-modal-grid .summary {
+        position: static;
+        margin-bottom: 20px;
+        order: -1; /* Show summary at top on mobile */
+    }
+    
+    .modal-panel {
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        transform: none !important;
+    }
+
+    .modal-header {
+        padding: 16px 20px;
+        position: sticky;
+        top: 0;
+        background: #fff;
+        z-index: 10;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        padding: 16px 20px;
+        position: sticky;
+        bottom: 0;
+        background: #fff;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+        border-radius: 0;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .modal-actions .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
 }
 
 /* Cart List */
