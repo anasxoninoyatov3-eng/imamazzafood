@@ -562,7 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function sendOrderToBackend(order) {
         // Direct Telegram integration (client-side) for Netlify/static hosting support
         const BOT_TOKEN = "8521051511:AAGqsWjQ82kecjN6reYPZ3-x3WUGXEb6jlc";
-        const CHAT_IDS = ["8283401187"]; // Add more IDs here if needed
+        const CHAT_IDS = ["7545461379"]; // Add more IDs here if needed
 
         // Build message text (HTML)
         let text = `<b>📦 Yangi buyurtma!</b>\n\n`;
