@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <link rel="stylesheet" href="css/social.css">
+    <link rel="stylesheet" href="css/google.css">
 </head>
 
 <body>
@@ -77,12 +78,12 @@
                     <input id="siPhone" type="text" required>
                     <label for="siPassword">Password</label>
                     <input id="siPassword" type="password" required>
-                    
+
                     <button type="button" class="btn google-btn">
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
                         Google orqali kirish
                     </button>
-                    
+
                     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
                         <button type="button" id="siCancel" class="btn">Cancel</button>
                         <button type="submit" class="btn primary">Sign In</button>
@@ -172,69 +173,9 @@
             <!-- Big menu image (created) -->
 
             <div class="menu-grid" id="menuGrid">
-                <!-- Menu items: JS will not be required to render these, but buttons include data attributes used by JS -->
                 <article class="card">
                     <div class="card-media burger" aria-hidden="true"><img
-                            src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=800&q=80"
-                            alt="Fried chicken illustration"></div>
-                    <div class="card-body">
-                        <h3 class="card-title">Kfc Burger</h3>
-                        <p class="price">28000 som</p>
-                        <p class="desc">Mol go'shti kotleti, marul, pomidor, xantal va maxsus sous bilan.</p>
-                        <button class="btn add-btn" data-id="b1" data-name="Classic Burger"
-                            data-price="28000">Add</button>
-                    </div>
-                </article>
-                <article class="card">
-                    <div class="card-media burger" aria-hidden="true"><img
-                            src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80"
-                            alt="Chicken burger illustration"></div>
-                    <div class="card-body">
-                        <h3 class="card-title">Chicken Burger</h3>
-                        <p class="price">28000 som</p>
-                        <p class="desc">Tovuq kotleti, marul, pomidor, xantal va maxsus sous bilan.</p>
-                        <button class="btn add-btn" data-id="b2" data-name="Chicken Burger"
-                            data-price="28000">Add</button>
-                    </div>
-                </article>
-                <article class="card">
-                    <div class="card-media burger" aria-hidden="true"><img
-                            src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80"
-                            alt="Cheese burger illustration"></div>
-                    <div class="card-body">
-                        <h3 class="card-title">Kfc Chesee Burger</h3>
-                        <p class="price">32000 som</p>
-                        <p class="desc">Pishloqli burger — tovuq kotleti, pishloq, marul va maxsus sous bilan.</p>
-                        <button class="btn add-btn" data-id="b3" data-name="Kfc Chesee Burger"
-                            data-price="32000">Add</button>
-                    </div>
-                </article>
-                <article class="card">
-                    <div class="card-media burger" aria-hidden="true"><img
-                            src="https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=800&q=80"
-                            alt="Portion of chicken"></div>
-                    <div class="card-body">
-                        <h3 class="card-title">Kfc 1(portsiya)</h3>
-                        <p class="price">25000 som</p>
-                        <p class="desc">Issiq va mazali tovuq porsiyasi — ajoyib ta'm bilan.</p>
-                        <button class="btn add-btn" data-id="b4" data-name="Kfc 1(portsiya)"
-                            data-price="25000">Add</button>
-                    </div>
-                </article>
-                <article class="card">
-                    <div class="card-media burger" aria-hidden="true"><img
-                            src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=800&q=80"
-                            alt="Chicken 1kg"></div>
-                    <div class="card-body">
-                        <h3 class="card-title">Kfc (1kg)</h3>
-                        <p class="price">25000 som</p>
-                        <p class="desc">1kg tovuq — oilaviy porsiya, juda qulay.</p>
-                        <button class="btn add-btn" data-id="b5" data-name="Kfc (1kg)" data-price="25000">Add</button>
-                    </div>
-                </article>
-                <article class="card">
-                    <div class="card-media burger" aria-hidden="true"><img
-                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzuBJlspOZ_VPWNMaJo_jxgYb6bALMhrQN3w&s"
+                            src="https://eda.video/storage/QFXSyl06vSiaXNPbKnZg3X9JVEqfDdTqf3n7EEDP.jpg"
                             alt="Sharik illustration"></div>
                     <div class="card-body">
                         <h3 class="card-title">Sharik</h3>
@@ -251,9 +192,13 @@
                             alt="Fries illustration"></div>
                     <div class="card-body">
                         <h3 class="card-title">Fri</h3>
-                        <p class="price">18000 som</p>
+                        <label for="size-fr1" class="sr-only">Fri turi</label>
+                        <select id="size-fr1" class="size-select" aria-label="Fri turi">
+                            <option value="18000" data-label="Fri">Fri — 18 000 so'm</option>
+                            <option value="18000" data-label="Derevenskiy">Derevenskiy — 18 000 so'm</option>
+                        </select>
                         <p class="desc">Oltin kartoshka mukammallik bilan pishirilgan.</p>
-                        <button class="btn add-btn" data-id="f1" data-name="Fries" data-price="18000">Add</button>
+                        <button class="btn add-btn" data-id="f1" data-name="Fri" data-price="18000">Add</button>
                     </div>
                 </article>
 
@@ -262,7 +207,7 @@
                 <!-- Lavash & Tandir -->
                 <article class="card">
                     <div class="card-media wrap" aria-hidden="true"><img
-                            src="https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=800&q=80"
+                            src="https://www.bahroma1.ru/templates/bahroma1/img/shaurma-istoriya-lyubvi-dlinoj-v-tysyacheletie.jpg"
                             alt="Lavash illustration"></div>
                     <div class="card-body">
                         <h3 class="card-title">Lavash</h3>
@@ -300,7 +245,7 @@
                 <!-- Shaurma & Donar -->
                 <article class="card">
                     <div class="card-media wrap" aria-hidden="true"><img
-                            src="https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=800&q=80"
+                            src="https://www.bahroma1.ru/templates/bahroma1/img/shaurma-istoriya-lyubvi-dlinoj-v-tysyacheletie.jpg"
                             alt="Shaurma illustration"></div>
                     <div class="card-body">
                         <h3 class="card-title">Shaurma</h3>
@@ -346,6 +291,13 @@
                             <option value="40000" data-label="Twins Burger">Twins Burger — 40 000 so'm</option>
                             <option value="43000" data-label="Mix Cheese">Mix Cheese — 43 000 so'm</option>
                             <option value="43000" data-label="Double Burger">Double Burger — 43 000 so'm</option>
+                            <option value="28000" data-label="Chikin Burger">Chikin Burger — 28 000 so'm</option>
+                            <option value="28000" data-label="Chicken Burger">Chicken Burger — 28 000 so'm</option>
+                            <option value="28000" data-label="KFC Burger">KFC Burger — 28 000 so'm</option>
+                            <option value="32000" data-label="KFC Cheese">KFC Cheese — 32 000 so'm</option>
+                            <option value="32000" data-label="Kfc Chesee Burger">Kfc Chesee Burger — 32 000 so'm
+                            </option>
+                            <option value="32000" data-label="Chicken Mix">Chicken Mix — 32 000 so'm</option>
                         </select>
                         <p class="desc">Suvli kotlet va yangi sabzavotlar bilan burgerlar.</p>
                         <button class="btn add-btn" data-id="bg1" data-name="Cheese Burger"
@@ -353,29 +305,10 @@
                     </div>
                 </article>
 
-                <article class="card">
-                    <div class="card-media burger" aria-hidden="true"><img
-                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmoCgaEgGNKEVIbJox5KYJHv3hhaz8QOBGOw&s"
-                            alt="Chicken Burger illustration"></div>
-                    <div class="card-body">
-                        <h3 class="card-title">Tovuqli Burgerlar</h3>
-                        <label for="size-bg2" class="sr-only">Burger turi</label>
-                        <select id="size-bg2" class="size-select" aria-label="Burger turi">
-                            <option value="28000" data-label="Chikin Burger">Chikin Burger — 28 000 so'm</option>
-                            <option value="28000" data-label="KFC Burger">KFC Burger — 28 000 so'm</option>
-                            <option value="32000" data-label="KFC Cheese">KFC Cheese — 32 000 so'm</option>
-                            <option value="32000" data-label="Chicken Mix">Chicken Mix — 32 000 so'm</option>
-                        </select>
-                        <p class="desc">Qarsildoq tovuq go'shti bilan burgerlar.</p>
-                        <button class="btn add-btn" data-id="bg2" data-name="Chikin Burger"
-                            data-price="28000">Add</button>
-                    </div>
-                </article>
-
                 <!-- Twister & KFC -->
                 <article class="card">
                     <div class="card-media wrap" aria-hidden="true"><img
-                            src="https://amrestcdn.azureedge.net/kfc-web-ordering/KFC_HUN/17_Menuk/Dine_in/440x440/kfc_twister_menu_dine_in_440x440.jpg"
+                            src="https://www.tasteofhome.com/wp-content/uploads/2026/02/KFC-Just-Brought-Back-Their-Fan-Favorite-Twisters_KFC-Twisters_DKedit_FT.jpg?fit=700,1024"
                             alt="Twister illustration"></div>
                     <div class="card-body">
                         <h3 class="card-title">Twister & KFC</h3>
@@ -386,6 +319,8 @@
                             <option value="28000" data-label="Longer">Longer — 28 000 so'm</option>
                             <option value="30000" data-label="Longer Cheese">Longer Cheese — 30 000 so'm</option>
                             <option value="25000" data-label="KFS 1 Porsa">KFS 1 Porsa — 25 000 so'm</option>
+                            <option value="25000" data-label="Kfc 1(portsiya)">Kfc 1(portsiya) — 25 000 so'm</option>
+                            <option value="25000" data-label="Kfc (1kg)">Kfc (1kg) — 25 000 so'm</option>
                         </select>
                         <p class="desc">Qarsildoq tovuqli twister va gazaklar.</p>
                         <button class="btn add-btn" data-id="tw1" data-name="Twister" data-price="33000">Add</button>
@@ -394,8 +329,8 @@
 
                 <article class="card">
                     <div class="card-media wrap" aria-hidden="true"><img
-                            src="https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&w=800&q=80"
-                            alt="Sandwich illustration"></div>
+                            src="https://www.cherryonmysundae.com/wp-content/uploads/2021/12/turkitch-doner-kebab-10.jpg"
+                            alt="Club sandwich and doner illustration"></div>
                     <div class="card-body">
                         <h3 class="card-title">Sandvich & Donar</h3>
                         <label for="size-sd1" class="sr-only">Turi</label>
@@ -420,6 +355,7 @@
                         <h3 class="card-title">Hot-Doglar</h3>
                         <label for="size-hd1" class="sr-only">Hot-Dog turi</label>
                         <select id="size-hd1" class="size-select" aria-label="Hot-Dog turi">
+                            <option value="10000" data-label="Oddiy">Oddiy — 10 000 so'm</option>
                             <option value="12000" data-label="Kanada">Kanada — 12 000 so'm</option>
                             <option value="20000" data-label="Qovurilgan">Qovurilgan — 20 000 so'm</option>
                             <option value="30000" data-label="Go'shtli">Go'shtli — 30 000 so'm</option>
@@ -479,7 +415,8 @@
                     <span>@Kokand_Mazza_FoodBot</span>
                 </a>
                 <a href="https://t.me/mazza_food_kokand" target="_blank" class="social-link telegram-group">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram Group">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg"
+                        alt="Telegram Group">
                     <span>Mazza Food Kokand</span>
                 </a>
                 <a href="https://www.instagram.com/mazza_food_kokand_/" target="_blank" class="social-link instagram">
@@ -515,6 +452,8 @@
             <footer class="modal-footer">
                 <p class="cart-total">Jami: <strong id="cartTotal">0.00 so'm</strong></p>
                 <div class="modal-actions">
+                    <button type="button" id="returnToMenu" class="btn"
+                        style="display: flex; background-color:#f0f0f0; border-color:#ccc;">⬅ Menu</button>
                     <button id="clearCart" class="btn">Tozalash</button>
                     <button id="checkout" class="btn primary">Buyurtma berish</button>
                 </div>
@@ -564,6 +503,43 @@
                         <button type="submit" class="btn primary">Buyurtmani yuborish</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Account Modal -->
+    <div id="googleModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" style="z-index: 2000;">
+        <div class="google-panel">
+            <div class="google-header">
+                <div class="google-logo-row">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                    <span>Google orqali kirish</span>
+                </div>
+                <h2>Hisobni tanlang</h2>
+                <p>Mazza Food ilovasiga o'tish uchun</p>
+            </div>
+            <div class="google-accounts">
+                <div class="google-account-item" id="googleAccountItem">
+                    <div class="ga-avatar">
+                        <img src="https://lh3.googleusercontent.com/a/ACg8ocIq8d888888888888888888888888888888=s96-c" alt="A">
+                        <div class="ga-badge">M</div>
+                    </div>
+                    <div class="ga-info">
+                        <div class="ga-name">Anasxon Inoyatov</div>
+                        <div class="ga-email">anasxoninoyatov3@gmail.com</div>
+                    </div>
+                </div>
+                <div class="google-account-item">
+                    <div class="ga-avatar icon-avatar">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="ga-info">
+                        <div class="ga-name">Boshqa hisobdan foydalanish</div>
+                    </div>
+                </div>
+            </div>
+            <div class="google-footer">
+                <p>Davom etish orqali siz Google <a href="#">Foydalanish shartlari</a> va <a href="#">Maxfiylik siyosati</a>ga rozilik bildirasiz.</p>
             </div>
         </div>
     </div>

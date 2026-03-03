@@ -120,9 +120,38 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeCartFn() {
         cartModal.setAttribute('aria-hidden', 'true');
     }
+    
+    // Auth Modal Handlers
+    function openAuth() {
+        if (authModal) authModal.setAttribute('aria-hidden', 'false');
+    }
+    function closeAuthFn(force = false) {
+        if (!force && !getCurrentUser()) return; // Don't close if forced login is active and user not logged in
+        if (authModal) authModal.setAttribute('aria-hidden', 'true');
+        // Restore close button visibility if user is now logged in
+        if (closeAuth) closeAuth.style.display = 'flex';
+        // Restore click outside listener if logged in
+        if (authModal) {
+             authModal.onclick = (e) => { if (e.target === authModal) closeAuthFn(); };
+        }
+    }
 
     cartBtn.addEventListener('click', openCart);
     closeCart.addEventListener('click', closeCartFn);
+    
+    // "Return to Menu" button handler
+    const returnToMenuBtn = document.getElementById('returnToMenu');
+    if (returnToMenuBtn) {
+        returnToMenuBtn.addEventListener('click', () => {
+            closeCartFn();
+            // Scroll to menu section
+            const menuSection = document.getElementById('menu');
+            if (menuSection) {
+                menuSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    }
+
     clearCart.addEventListener('click', () => { cart = {}; updateCartUI(); });
     checkout.addEventListener('click', () => {
         if (Object.keys(cart).length === 0) { alert('Avval biror narsa qo\'shing.'); return }
@@ -278,12 +307,75 @@ document.addEventListener('DOMContentLoaded', () => {
     // initialize header auth state
     renderAuthState();
 
+    // Check if user is logged in, if not, force auth modal
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+        showSignIn();
+        openAuth();
+        // Hide close button
+        if (closeAuth) closeAuth.style.display = 'none';
+        // Prevent closing by background click
+        if (authModal) {
+            authModal.removeEventListener('click', e => { if (e.target === authModal) closeAuthFn(); });
+            authModal.onclick = null;
+        }
+        // Disable Escape key closing for auth modal specifically
+        // Note: The global escape handler is inside mobileNavToggle IIFE which is fine, 
+        // but we need to ensure closeAuthFn doesn't work if forced.
+        // We will modify closeAuthFn to check if forced.
+    }
+
     cartModal.addEventListener('click', e => {
         if (e.target === cartModal) closeCartFn();
     })
 
     if (authModal) {
-        authModal.addEventListener('click', e => { if (e.target === authModal) closeAuthFn(); });
+        authModal.addEventListener('click', e => { 
+            // Only allow closing if user is logged in
+            if (getCurrentUser() && e.target === authModal) closeAuthFn(); 
+        });
+    }
+
+    // Google Auth Simulation
+    const googleBtns = document.querySelectorAll('.google-btn');
+    const googleModal = document.getElementById('googleModal');
+    Distance
+    // Open Google Account Chooser
+    googleBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Close main auth modal temporarily (or overlay)
+            // But we keep it simple: just show google modal
+            if (googleModal) googleModal.setAttribute('aria-hidden', 'false');
+        });
+    });
+
+    // Handle account selection in Google Modal
+    const googleAccountItem = document.getElementById('googleAccountItem');
+    if (googleAccountItem) {
+        googleAccountItem.addEventListener('click', () => {
+            // Simulate Login with "Anasxon Inoyatov"
+            const mockGoogleUser = {
+                id: 'g_anasxon',
+                name: 'Anasxon Inoyatov',
+                phone: 'anasxoninoyatov3@gmail.com',
+                hash: 'google-oauth-token-secure'
+            };
+            
+            // Save user
+            const users = loadUsers();
+            if (!users.find(u => u.id === mockGoogleUser.id)) {
+                users.push(mockGoogleUser);
+                saveUsers(users);
+            }
+            setCurrentUserId(mockGoogleUser.id);
+            
+            // Close all modals and update UI
+            if (googleModal) googleModal.setAttribute('aria-hidden', 'true');
+            renderAuthState();
+            closeAuthFn(true); // Force close main auth modal
+            alert('Google orqali muvaffaqiyatli kirildi! ✅');
+        });
     }
 
     // Mobile hamburger menu toggle
