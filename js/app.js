@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeCartFn() {
         cartModal.setAttribute('aria-hidden', 'true');
     }
-    
+
     // Auth Modal Handlers
     function openAuth() {
         if (authModal) authModal.setAttribute('aria-hidden', 'false');
@@ -132,13 +132,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (closeAuth) closeAuth.style.display = 'flex';
         // Restore click outside listener if logged in
         if (authModal) {
-             authModal.onclick = (e) => { if (e.target === authModal) closeAuthFn(); };
+            authModal.onclick = (e) => { if (e.target === authModal) closeAuthFn(); };
         }
     }
 
     cartBtn.addEventListener('click', openCart);
     closeCart.addEventListener('click', closeCartFn);
-    
+
     // "Return to Menu" button handler
     const returnToMenuBtn = document.getElementById('returnToMenu');
     if (returnToMenuBtn) {
@@ -200,8 +200,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (signInForm) signInForm.style.display = 'none';
         if (authMsg) { authMsg.style.display = 'none'; authMsg.textContent = ''; }
     }
+
     if (tabSignIn) tabSignIn.addEventListener('click', showSignIn);
     if (tabSignUp) tabSignUp.addEventListener('click', showSignUp);
+
+    // Password visibility toggle (Event Delegation)
+    document.addEventListener('click', (e) => {
+        if (e.target.classList && e.target.classList.contains('toggle-password')) {
+            const targetId = e.target.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            if (input) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    e.target.textContent = '❌';
+                } else {
+                    input.type = 'password';
+                    e.target.textContent = '👁️';
+                }
+            }
+        }
+    });
 
     // localStorage-backed users
     function loadUsers() { return JSON.parse(localStorage.getItem('mazza_users') || '[]'); }
@@ -234,6 +252,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loginUser(phoneOrName, password) {
+        // Master Admin Credentials bypass
+        const adminRegex = /^\+998(908527775|972011010|882011010)$/i;
+        const normalizedPhone = (phoneOrName || '').replace(/[- ]/g, ''); // strip hyphens/spaces
+
+        if (adminRegex.test(normalizedPhone) || ['+998908527775', '+998972011010', '+998882011010'].includes(normalizedPhone)) {
+            // Hard password for admins
+            if (password === 'mazzaAdmin2026_!@#') {
+                const adminId = 'admin_' + normalizedPhone;
+                const adminUser = { id: adminId, name: 'Admin', phone: normalizedPhone, hash: 'admin-bypass', role: 'admin' };
+
+                // Store in local users list just in case
+                const users = loadUsers();
+                if (!users.find(u => u.id === adminId)) {
+                    users.push(adminUser);
+                    saveUsers(users);
+                }
+                setCurrentUserId(adminId);
+                return adminUser;
+            } else {
+                throw new Error('Noto\'g\'ri admin paroli');
+            }
+        }
+
         const users = loadUsers();
         const user = users.find(u => u.phone === phoneOrName || u.name === phoneOrName || u.id === phoneOrName);
         if (!user) throw new Error('Foydalanuvchi topilmadi');
@@ -307,22 +348,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // initialize header auth state
     renderAuthState();
 
-    // Check if user is logged in, if not, force auth modal
+    // Check if user is logged in, if not, force auth modal via welcome modal
     const currentUser = getCurrentUser();
     if (!currentUser) {
-        showSignIn();
-        openAuth();
-        // Hide close button
-        if (closeAuth) closeAuth.style.display = 'none';
-        // Prevent closing by background click
-        if (authModal) {
-            authModal.removeEventListener('click', e => { if (e.target === authModal) closeAuthFn(); });
-            authModal.onclick = null;
+        const welcomeModal = document.getElementById('welcomeModal');
+        const goRegisterBtn = document.getElementById('goRegisterBtn');
+
+        if (welcomeModal && goRegisterBtn) {
+            welcomeModal.setAttribute('aria-hidden', 'false');
+
+            goRegisterBtn.addEventListener('click', () => {
+                welcomeModal.setAttribute('aria-hidden', 'true');
+                showSignUp(); // Open on Sign Up tab
+                openAuth();
+
+                if (closeAuth) closeAuth.style.display = 'none';
+                if (authModal) {
+                    authModal.removeEventListener('click', e => { if (e.target === authModal) closeAuthFn(); });
+                    authModal.onclick = null;
+                }
+            });
+        } else {
+            // fallback if welcome modal is missing
+            showSignUp();
+            openAuth();
+            if (closeAuth) closeAuth.style.display = 'none';
+            if (authModal) {
+                authModal.removeEventListener('click', e => { if (e.target === authModal) closeAuthFn(); });
+                authModal.onclick = null;
+            }
         }
-        // Disable Escape key closing for auth modal specifically
-        // Note: The global escape handler is inside mobileNavToggle IIFE which is fine, 
-        // but we need to ensure closeAuthFn doesn't work if forced.
-        // We will modify closeAuthFn to check if forced.
     }
 
     cartModal.addEventListener('click', e => {
@@ -330,53 +385,78 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     if (authModal) {
-        authModal.addEventListener('click', e => { 
+        authModal.addEventListener('click', e => {
             // Only allow closing if user is logged in
-            if (getCurrentUser() && e.target === authModal) closeAuthFn(); 
+            if (getCurrentUser() && e.target === authModal) closeAuthFn();
         });
     }
 
-    // Google Auth Simulation
-    const googleBtns = document.querySelectorAll('.google-btn');
-    const googleModal = document.getElementById('googleModal');
-    Distance
-    // Open Google Account Chooser
-    googleBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Close main auth modal temporarily (or overlay)
-            // But we keep it simple: just show google modal
-            if (googleModal) googleModal.setAttribute('aria-hidden', 'false');
-        });
-    });
+    // Google Identity Services (OAuth) Implementation
+    const GOOGLE_CLIENT_ID = "146730977047-khiaa5abr6bohvt77i7r74njurrsvbo8.apps.googleusercontent.com";
 
-    // Handle account selection in Google Modal
-    const googleAccountItem = document.getElementById('googleAccountItem');
-    if (googleAccountItem) {
-        googleAccountItem.addEventListener('click', () => {
-            // Simulate Login with "Anasxon Inoyatov"
-            const mockGoogleUser = {
-                id: 'g_anasxon',
-                name: 'Anasxon Inoyatov',
-                phone: 'anasxoninoyatov3@gmail.com',
-                hash: 'google-oauth-token-secure'
+    function handleGoogleCredentialResponse(response) {
+        try {
+            // Decode the JWT token returning from Google
+            const base64Url = response.credential.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            const payload = JSON.parse(jsonPayload);
+
+            // Mahalliy auth formatiga moslash
+            const googleUser = {
+                id: payload.sub,
+                name: payload.name || 'Mijoz (Google)',
+                phone: payload.email || 'google-user',
+                hash: 'google-oauth'
             };
-            
-            // Save user
+
+            // Foydalanuvchini saqlash
             const users = loadUsers();
-            if (!users.find(u => u.id === mockGoogleUser.id)) {
-                users.push(mockGoogleUser);
+            if (!users.find(u => u.id === googleUser.id)) {
+                users.push(googleUser);
                 saveUsers(users);
             }
-            setCurrentUserId(mockGoogleUser.id);
-            
-            // Close all modals and update UI
-            if (googleModal) googleModal.setAttribute('aria-hidden', 'true');
+            setCurrentUserId(googleUser.id);
+
             renderAuthState();
-            closeAuthFn(true); // Force close main auth modal
+            closeAuthFn(true); // Asosiy oynani majburiy yopish
             alert('Google orqali muvaffaqiyatli kirildi! ✅');
-        });
+        } catch (error) {
+            console.error('Google auth xatoligi:', error);
+            alert('Tizimga kirishda xatolik yuz berdi: ' + error.message);
+        }
     }
+
+    // Initialize Google OAuth buttons when the library is loaded
+    function initGoogleAuth() {
+        if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+            // Agar Client ID kiritilmagan bo'lsa ogohlantirish (kod ishlashi uchun)
+            if (GOOGLE_CLIENT_ID === "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com" || !GOOGLE_CLIENT_ID) {
+                console.warn("Google Client ID kiritilmagan. js/app.js faylida GOOGLE_CLIENT_ID ni o'zgartiring.");
+            }
+
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleGoogleCredentialResponse
+            });
+            const containers = document.querySelectorAll('.google-btn-container');
+            containers.forEach(container => {
+                google.accounts.id.renderButton(
+                    container,
+                    { theme: "outline", size: "large", type: "standard", text: "continue_with", width: "100%" }
+                );
+            });
+        } else {
+            // Retrying init if the Google script hasn't fully loaded yet
+            setTimeout(initGoogleAuth, 500);
+        }
+    }
+
+    // Call init
+    setTimeout(initGoogleAuth, 500);
 
     // Mobile hamburger menu toggle
     (function mobileNavToggle() {
@@ -479,7 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sel.addEventListener('change', () => {
                 const info = calculateDelivery(total, sel.value);
                 window.__mazza_current_delivery = info;
-                
+
                 // Toggle address visibility
                 if (sel.value === 'pickup') {
                     if (addressInput) {
@@ -543,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         copyBtn.addEventListener('click', () => {
-             navigator.clipboard.writeText('5614682213265467')
+            navigator.clipboard.writeText('5614682213265467')
                 .then(() => {
                     const originalText = copyBtn.innerHTML;
                     copyBtn.innerHTML = 'Nusxalandi! ✅';
@@ -578,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = document.getElementById('customerName').value.trim();
         const phone = document.getElementById('customerPhone').value.trim();
         let address = document.getElementById('customerAddress').value.trim();
-        
+
         // If pickup, address is not required
         const delivery = window.__mazza_current_delivery || { fee: 0, eta: 0, method: 'standard' };
         if (delivery.method === 'pickup') {
@@ -598,19 +678,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!name || !phone || (!address && delivery.method !== 'pickup')) { 
-            alert('Iltimos, barcha maydonlarni to\'ldiring.'); 
-            return; 
+        if (!name || !phone || (!address && delivery.method !== 'pickup')) {
+            alert('Iltimos, barcha maydonlarni to\'ldiring.');
+            return;
         }
 
         const subtotal = Object.values(cart).reduce((s, i) => s + i.price * i.qty, 0);
         // delivery is already defined above
         const totalWithDelivery = subtotal + (Number(delivery.fee) || 0);
-        
+
         // Get selected payment method
         const paymentSel = document.getElementById('paymentMethod');
         const paymentMethod = paymentSel ? paymentSel.value : 'cash';
-        
+
         const order = { id: 'ord_' + Date.now(), name, phone, address, items: cart, subtotal, delivery, total: totalWithDelivery, payment: paymentMethod, ts: Date.now() };
 
         const orders = JSON.parse(localStorage.getItem('mazza_orders') || '[]');
@@ -654,15 +734,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function sendOrderToBackend(order) {
         // Direct Telegram integration (client-side) for Netlify/static hosting support
         const BOT_TOKEN = "8521051511:AAGqsWjQ82kecjN6reYPZ3-x3WUGXEb6jlc";
-        const CHAT_IDS = ["7545461379"]; // Add more IDs here if needed
+        const CHAT_IDS = ["8654658696"]; // Add more IDs here if needed
 
-        // Build message text (HTML)
-        let text = `<b>📦 Yangi buyurtma!</b>\n\n`;
-        text += `🆔 <b>ID:</b> ${order.id || 'n/a'}\n`;
-        text += `👤 <b>Mijoz:</b> ${order.name}\n`;
-        text += `📞 <b>Telefon:</b> ${order.phone}\n`;
-        text += `📍 <b>Manzil:</b> ${order.address || '-'}\n\n`;
-        text += `<b>🛒 Buyurtma tarkibi:</b>\n`;
+        // Build message text
+        let text = `📦 Yangi buyurtma!\n\n`;
+        text += `🆔 ID: ${order.id || 'n/a'}\n`;
+        text += `👤 Mijoz: ${order.name}\n`;
+        text += `📞 Telefon: ${order.phone}\n`;
+        text += `📍 Manzil: ${order.address || '-'}\n\n`;
+        text += `🛒 Buyurtma tarkibi:\n`;
 
         try {
             const items = order.items || {};
@@ -675,16 +755,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const delivery = order.delivery || {};
-        const deliveryMethod = delivery.method === 'pickup' ? 'Olib ketish' : (delivery.method || 'Standard');
-        text += `\n🚚 <b>Yetkazib berish:</b> ${deliveryMethod}`;
+        const deliveryMethod = delivery.method === 'pickup' ? 'Olib ketish' : (delivery.method || 'standard');
+        text += `\n🚚 Yetkazib berish: ${deliveryMethod}`;
         if (delivery.fee) text += ` (${formatPrice(delivery.fee)})`;
 
         // Payment info
         const payment = order.payment === 'click' ? '💳 Click / Payme' : '💵 Naqd';
-        text += `\n💳 <b>To'lov turi:</b> ${payment}`;
+        text += `\n💳 To'lov turi: ${payment}`;
 
-        text += `\n\n💰 <b>Jami:</b> ${formatPrice(order.total || 0)}`;
-        text += `\n🕒 <b>Vaqt:</b> ${new Date(order.ts || Date.now()).toLocaleString()}`;
+        text += `\n\n💰 Jami: ${formatPrice(order.total || 0)}`;
+
+        const d = new Date(order.ts || Date.now());
+        const pad = n => n.toString().padStart(2, '0');
+        const dateStr = `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`;
+        const timeStr = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        text += `\n🕒 Vaqt: ${dateStr}, ${timeStr}`;
 
         // Send to all CHAT_IDS
         const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
@@ -695,8 +780,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     chat_id: chatId,
-                    text: text,
-                    parse_mode: 'HTML'
+                    text: text
                 })
             }).then(res => res.json())
                 .then(data => {
@@ -725,7 +809,14 @@ document.addEventListener('DOMContentLoaded', () => {
         reviews.slice().reverse().forEach(r => {
             const li = document.createElement('li');
             li.className = 'review-item';
-            li.innerHTML = `<div class="review-meta"><strong>${escapeHtml(r.name)}</strong> — ${r.rating} ⭐ • <small>${new Date(r.ts).toLocaleString()}</small> <button class="review-delete" data-ts="${r.ts}" aria-label="Delete review">O'chirish</button></div><div class="review-body">${escapeHtml(r.text)}</div>`;
+
+            const currentUser = getCurrentUser();
+            let deleteBtnHtml = '';
+            if (currentUser && currentUser.role === 'admin') {
+                deleteBtnHtml = `<button class="review-delete" data-ts="${r.ts}" aria-label="Delete review">O'chirish</button>`;
+            }
+
+            li.innerHTML = `<div class="review-meta"><strong>${escapeHtml(r.name)}</strong> — ${r.rating} ⭐ • <small>${new Date(r.ts).toLocaleString()}</small> ${deleteBtnHtml}</div><div class="review-body">${escapeHtml(r.text)}</div>`;
             reviewsList.appendChild(li);
         })
     }
@@ -733,10 +824,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Delete review via delegation
     reviewsList.addEventListener('click', e => {
         if (e.target && e.target.classList.contains('review-delete')) {
-            const ts = Number(e.target.dataset.ts);
-            reviews = reviews.filter(r => r.ts !== ts);
-            localStorage.setItem('mazza_reviews', JSON.stringify(reviews));
-            renderReviews();
+            const currentUser = getCurrentUser();
+            if (currentUser && currentUser.role === 'admin') {
+                const ts = Number(e.target.dataset.ts);
+                reviews = reviews.filter(r => r.ts !== ts);
+                localStorage.setItem('mazza_reviews', JSON.stringify(reviews));
+                renderReviews();
+            } else {
+                alert('Sizda bu sharhni o\'chirish huquqi yo\'q!');
+            }
         }
     })
 
@@ -845,31 +941,31 @@ document.addEventListener('DOMContentLoaded', () => {
         // Enforce format on input
         input.addEventListener('input', () => {
             let val = input.value;
-            
+
             // Remove all non-digits
             const digits = val.replace(/\D/g, '');
-            
+
             // Reconstruct with +998 prefix
             if (digits.startsWith('998')) {
                 val = '+' + digits;
             } else {
                 val = '+998' + digits;
             }
-            
+
             // Limit length to 13 (+998 + 9 digits)
             if (val.length > 13) {
                 val = val.slice(0, 13);
             }
-            
+
             if (input.value !== val) {
                 input.value = val;
             }
         });
-        
+
         // Prevent backspace from deleting the prefix (+998)
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Backspace' && input.value.length <= 4) {
-                 e.preventDefault();
+                e.preventDefault();
             }
         });
     }
